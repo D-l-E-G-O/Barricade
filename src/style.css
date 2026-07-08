@@ -1,0 +1,228 @@
+:root {
+    --bg-dark: #0f172a;
+    --surface: rgba(30, 41, 59, 0.7);
+    --surface-hover: rgba(51, 65, 85, 0.9);
+    --p1-color: #38bdf8;
+    --p1-glow: 0 0 15px rgba(56, 189, 248, 0.6);
+    --p2-color: #f43f5e;
+    --p2-glow: 0 0 15px rgba(244, 63, 94, 0.6);
+    --wall-color: #fbbf24;
+    --wall-glow: 0 0 15px rgba(251, 191, 36, 0.6);
+    --error-color: #ef4444;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    
+    --cell-size: 50px;
+    --gap-size: 15px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background: radial-gradient(circle at 50% -20%, #1e293b, var(--bg-dark));
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+}
+
+.glass-panel {
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+header {
+    width: 100%;
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: linear-gradient(to right, var(--p1-color), var(--p2-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 2rem;
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.player-info.active {
+    opacity: 1;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.p1-avatar {
+    background: var(--p1-color);
+    box-shadow: var(--p1-glow);
+}
+
+.p2-avatar {
+    background: var(--p2-color);
+    box-shadow: var(--p2-glow);
+}
+
+.turn-indicator {
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Board Layout */
+.board {
+    padding: 2rem;
+    display: grid;
+    /* 9 cells, 8 gaps */
+    grid-template-columns: repeat(8, var(--cell-size) var(--gap-size)) var(--cell-size);
+    grid-template-rows: repeat(8, var(--cell-size) var(--gap-size)) var(--cell-size);
+    gap: 0;
+    position: relative;
+}
+
+/* DOM Elements */
+.cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cell:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.gap-h, .gap-v, .intersection {
+    background: transparent;
+}
+
+.gap-h {
+    height: var(--gap-size);
+    cursor: pointer;
+}
+
+.gap-v {
+    width: var(--gap-size);
+    cursor: pointer;
+}
+
+/* Player Tokens */
+.player-token {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 10;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.p1-token {
+    background: var(--p1-color);
+    box-shadow: var(--p1-glow);
+}
+
+.p2-token {
+    background: var(--p2-color);
+    box-shadow: var(--p2-glow);
+}
+
+/* Valid Move Highlights */
+.valid-move {
+    position: relative;
+}
+.valid-move::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+}
+.valid-move:hover::after {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Walls */
+.wall-placed {
+    background: var(--wall-color) !important;
+    box-shadow: var(--wall-glow) !important;
+    border-radius: 4px;
+    z-index: 5;
+}
+
+/* Wall Previews */
+.wall-preview {
+    background: rgba(251, 191, 36, 0.4) !important;
+    border-radius: 4px;
+}
+.wall-error {
+    background: rgba(239, 68, 68, 0.4) !important;
+}
+
+/* Toasts */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    background: var(--error-color);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-weight: 700;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast.hidden {
+    transform: translateY(100px);
+    opacity: 0;
+    pointer-events: none;
+}
