@@ -7,6 +7,7 @@ export class Board {
     public grid: Cell[][];
     public placedWalls: Wall[];
     public players: Player[];
+    public currentPlayerId: 1 | 2 = 1;
 
     public constructor() {
         this.grid = [];
@@ -55,18 +56,31 @@ export class Board {
         }
     }
 
-    public movePlayer(playerId: 1 | 2, targetCell: Cell): boolean {
-        const player = this.players[playerId - 1]!;
+    private executeWithTurnSafety(playerId: 1 | 2, action: () => boolean): boolean {
+        if (playerId !== this.currentPlayerId) return false;
 
-        const allowedMoves = this.getValidMoves(player);
+        const success = action();
 
-        if (!allowedMoves.includes(targetCell)) {
-            return false;
+        if (success) {
+            this.currentPlayerId = this.currentPlayerId === 1 ? 2 : 1;
         }
+        return success;
+    }
 
-        player.currentCell = targetCell;
+    public movePlayer(playerId: 1 | 2, targetCell: Cell): boolean {
+        return this.executeWithTurnSafety(playerId, () => {
+            const player = this.players[playerId - 1]!;
 
-        return true;
+            const allowedMoves = this.getValidMoves(player);
+
+            if (!allowedMoves.includes(targetCell)) {
+                return false;
+            }
+
+            player.currentCell = targetCell;
+
+            return true;
+        });
     }
 
     private getValidMoves(player: Player): Cell[] {
@@ -96,22 +110,24 @@ export class Board {
     }
 
     public placeWall(playerId: 1 | 2, wall: Wall): boolean {
-        const player = this.players[playerId - 1]!;
+        return this.executeWithTurnSafety(playerId, () => {
+            const player = this.players[playerId - 1]!;
 
-        if (
-            player.barriersLeft <= 0 ||
-            !this.isValidWallPlacement(wall) ||
-            this.isBlockingAllPaths(wall)
-        ) {
-            return false;
-        }
+            if (
+                player.barriersLeft <= 0 ||
+                !this.isValidWallPlacement(wall) ||
+                this.isBlockingAllPaths(wall)
+            ) {
+                return false;
+            }
 
-        this.blockPath(wall);
+            this.blockPath(wall);
 
-        this.placedWalls.push(wall);
-        player.barriersLeft--;
+            this.placedWalls.push(wall);
+            player.barriersLeft--;
 
-        return true;
+            return true;
+        });
     }
 
     private isValidWallPlacement(wall: Wall): boolean {

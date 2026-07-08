@@ -3,6 +3,5 @@ import { GameUI } from './ui/GameUI.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const board = new Board();
-    const ui = new GameUI();
+    const ui = new GameUI(board);
 });
-
