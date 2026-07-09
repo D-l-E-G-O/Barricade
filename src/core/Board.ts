@@ -242,4 +242,10 @@ export class Board {
             listener();
         }
     }
+
+    public isGameOver() {
+        const p1Won = this.players[0]!.currentCell.y === this.players[0]!.goalRow;
+        const p2Won = this.players[1]!.currentCell.y === this.players[1]!.goalRow;
+        return p1Won || p2Won;
+    }
 }
