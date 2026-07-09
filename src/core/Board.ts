@@ -86,7 +86,7 @@ export class Board {
         });
     }
 
-    private getValidMoves(player: Player): Cell[] {
+    public getValidMoves(player: Player): Cell[] {
         const moves: Cell[] = [];
 
         const opponent = this.players.find(p => p !== player)!;

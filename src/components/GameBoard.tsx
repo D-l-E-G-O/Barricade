@@ -5,6 +5,8 @@ import { GapHorizontal, GapVertical, Intersection } from "./Gap.js";
 
 export function GameBoard({ board }: { board: Board }) {
     const [toastMsg, setToastMsg] = useState<string | null>(null);
+    const currentPlayer = board.players[board.currentPlayerId - 1]!;
+    const validMoves = board.getValidMoves(currentPlayer);
 
     const showToast = (message: string) => {
         setToastMsg(message);
@@ -34,6 +36,7 @@ export function GameBoard({ board }: { board: Board }) {
                         const y = Math.floor(row / 2);
 
                         if (row % 2 === 0 && col % 2 === 0) {
+                            const isVal = validMoves.some(m => m.x === x && m.y === y);
                             return (
                                 <Cell
                                     key={`${col}-${row}`}
@@ -41,6 +44,7 @@ export function GameBoard({ board }: { board: Board }) {
                                     x={x}
                                     y={y}
                                     onClick={() => handleCellClick(x, y)}
+                                    isValidMove={isVal}
                                 />
                             );
                         }
