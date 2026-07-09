@@ -133,7 +133,7 @@ export class Board {
         });
     }
 
-    private isValidWallPlacement(wall: Wall): boolean {
+    public isValidWallPlacement(wall: Wall): boolean {
         // Check bounds
         if (
             wall.x < 0 ||

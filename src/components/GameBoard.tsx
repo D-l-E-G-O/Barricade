@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Board } from "../core/Board.js";
+import type { Wall } from "../models/types.js";
 import { Cell } from "./Cell.js";
 import { GapHorizontal, GapVertical, Intersection } from "./Gap.js";
 
@@ -7,6 +8,7 @@ export function GameBoard({ board }: { board: Board }) {
     const [toastMsg, setToastMsg] = useState<string | null>(null);
     const currentPlayer = board.players[board.currentPlayerId - 1]!;
     const validMoves = board.getValidMoves(currentPlayer);
+    const [hoveredWall, setHoveredWall] = useState<Wall | null>(null);
 
     const showToast = (message: string) => {
         setToastMsg(message);
@@ -14,6 +16,31 @@ export function GameBoard({ board }: { board: Board }) {
             setToastMsg(null);
         }, 2000);
     };
+
+    const handleGapMouseMove = (e: React.MouseEvent, x: number, y: number, isVertical: boolean) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        let wallX = x;
+        let wallY = y;
+
+        if (isVertical) {
+            const isTopHalf = (e.clientY - rect.top) < (rect.height / 2);
+            if (isTopHalf && y > 0) wallY = y - 1;
+        } else {
+            const isLeftHalf = (e.clientX - rect.left) < (rect.width / 2);
+            if (isLeftHalf && x > 0) wallX = x - 1;
+        }
+
+        wallX = Math.min(wallX, 7);
+        wallY = Math.min(wallY, 7);
+        const previewWall = { x: wallX, y: wallY, isVertical };
+        if (board.isValidWallPlacement(previewWall)) {
+            setHoveredWall(previewWall);
+        } else {
+            setHoveredWall(null);
+        }
+    };
+
+    const handleMouseLeave = () => setHoveredWall(null);
 
     const handleCellClick = (x: number, y: number) => {
         const success = board.movePlayer(board.currentPlayerId, board.grid[x]![y]!);
@@ -57,6 +84,9 @@ export function GameBoard({ board }: { board: Board }) {
                                     x={x}
                                     y={y}
                                     onClick={() => handleWallClick(x, y, true)}
+                                    onMouseMove={(e) => handleGapMouseMove(e, x, y, true)}
+                                    onMouseLeave={handleMouseLeave}
+                                    hoveredWall={hoveredWall}
                                 />
                             );
                         }
@@ -69,6 +99,9 @@ export function GameBoard({ board }: { board: Board }) {
                                     x={x}
                                     y={y}
                                     onClick={() => handleWallClick(x, y, false)}
+                                    onMouseMove={(e) => handleGapMouseMove(e, x, y, false)}
+                                    onMouseLeave={handleMouseLeave}
+                                    hoveredWall={hoveredWall}
                                 />
                             );
                         }
