@@ -5,6 +5,9 @@ import { Cell } from "./Cell.js";
 import { GapHorizontal, GapVertical, Intersection } from "./Gap.js";
 
 export function GameBoard({ board }: { board: Board }) {
+    const domSize = (board.size * 2) - 1;
+    const totalUnits = (board.size * 3) + ((board.size - 1) * 1);
+
     const [toastMsg, setToastMsg] = useState<string | null>(null);
     const currentPlayer = board.players[board.currentPlayerId - 1]!;
     const validMoves = board.getValidMoves(currentPlayer);
@@ -30,8 +33,8 @@ export function GameBoard({ board }: { board: Board }) {
             if (isLeftHalf && x > 0) wallX = x - 1;
         }
 
-        wallX = Math.min(wallX, 7);
-        wallY = Math.min(wallY, 7);
+        wallX = Math.min(wallX, board.size - 2);
+        wallY = Math.min(wallY, board.size - 2);
         const previewWall = { x: wallX, y: wallY, isVertical };
         if (board.isValidWallPlacement(previewWall)) {
             setHoveredWall(previewWall);
@@ -48,17 +51,25 @@ export function GameBoard({ board }: { board: Board }) {
     };
 
     const handleWallClick = (x: number, y: number, isVertical: boolean) => {
-        if (x === 8) x = 7;
-        if (y === 8) y = 7;
+        if (x === board.size - 1) x = board.size - 2;
+        if (y === board.size - 1) y = board.size - 2;
         const success = board.placeWall(board.currentPlayerId, { x, y, isVertical });
         if (!success) showToast("Invalid Wall!");
     };
 
     return (
         <main className="game-area">
-            <div className="board glass-panel">
-                {Array.from({ length: 17 }).map((_, row) =>
-                    Array.from({ length: 17 }).map((_, col) => {
+            <div className="board glass-panel"
+                style={{
+                    '--cell-size': `calc(min(80vh, 60vw) * 3 / ${totalUnits})`,
+                    '--gap-size': `calc(min(80vh, 60vw) * 1 / ${totalUnits})`,
+
+                    gridTemplateColumns: `repeat(${board.size - 1}, var(--cell-size) var(--gap-size)) var(--cell-size)`,
+                    gridTemplateRows: `repeat(${board.size - 1}, var(--cell-size) var(--gap-size)) var(--cell-size)`
+                } as React.CSSProperties}
+            >
+                {Array.from({ length: domSize }).map((_, row) =>
+                    Array.from({ length: domSize }).map((_, col) => {
                         const x = Math.floor(col / 2);
                         const y = Math.floor(row / 2);
 

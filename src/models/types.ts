@@ -1,15 +1,20 @@
 export class Player {
     public currentCell: Cell;
     public barriersLeft: number;
-    public goalRow: number;
-    public id: 1 | 2;
+    public goal: Goal;
+    public id: number;
 
-    public constructor(currentCell: Cell, barriersLeft: number, goalRow: number, id: 1 | 2) {
+    public constructor(currentCell: Cell, barriersLeft: number, goal: Goal, id: number) {
         this.currentCell = currentCell;
         this.barriersLeft = barriersLeft;
-        this.goalRow = goalRow;
+        this.goal = goal;
         this.id = id;
     }
+}
+
+export interface Goal {
+    axis: 'x' | 'y';
+    targetValue: number;
 }
 
 export interface Cell {

@@ -2,16 +2,16 @@ import { type Cell, Player, type Wall } from '../models/types.js';
 import { Pathfinder } from './Pathfinder.js';
 
 export class Board {
-    public static readonly SIZE = 9;
-
+    public size: number;
     public grid: Cell[][];
     public placedWalls: Wall[];
     public players: Player[];
-    public currentPlayerId: 1 | 2 = 1;
+    public currentPlayerId: number = 1;
 
     private listeners: Array<() => void> = [];
 
-    public constructor() {
+    public constructor(size: number = 9, numPlayers: number = 2) {
+        this.size = size;
         this.grid = [];
         this.placedWalls = [];
         this.players = [];
@@ -19,15 +19,24 @@ export class Board {
         this.grid = this.createGrid();
         this.linkGraph();
 
-        this.players.push(new Player(this.grid[4]![0]!, 10, 8, 1));
-        this.players.push(new Player(this.grid[4]![8]!, 10, 0, 2));
+        const center = Math.floor(this.size / 2);
+        const max = this.size - 1;
+
+        this.players.push(new Player(this.grid[center]![0]!, 10, { axis: 'y', targetValue: max }, 1));
+        this.players.push(new Player(this.grid[center]![max]!, 10, { axis: 'y', targetValue: 0 }, 2));
+        if (numPlayers >= 3) {
+            this.players.push(new Player(this.grid[0]![center]!, 10, { axis: 'x', targetValue: max }, 3));
+        }
+        if (numPlayers === 4) {
+            this.players.push(new Player(this.grid[max]![center]!, 10, { axis: 'x', targetValue: 0 }, 4));
+        }
     }
 
     private createGrid(): Cell[][] {
         const grid: Cell[][] = [];
-        for (let x = 0; x < Board.SIZE; x++) {
+        for (let x = 0; x < this.size; x++) {
             grid[x] = [];
-            for (let y = 0; y < Board.SIZE; y++) {
+            for (let y = 0; y < this.size; y++) {
                 grid[x]![y] = { x, y, up: null, down: null, left: null, right: null };
             }
         }
@@ -35,15 +44,15 @@ export class Board {
     }
 
     private linkGraph(): void {
-        for (let x = 0; x < Board.SIZE; x++) {
-            for (let y = 0; y < Board.SIZE; y++) {
+        for (let x = 0; x < this.size; x++) {
+            for (let y = 0; y < this.size; y++) {
                 const cell = this.grid[x]![y]!;
 
                 if (x > 0) {
                     cell.left = this.grid[x - 1]![y]!;
                 }
 
-                if (x < Board.SIZE - 1) {
+                if (x < this.size - 1) {
                     cell.right = this.grid[x + 1]![y]!;
                 }
 
@@ -51,26 +60,30 @@ export class Board {
                     cell.up = this.grid[x]![y - 1]!;
                 }
 
-                if (y < Board.SIZE - 1) {
+                if (y < this.size - 1) {
                     cell.down = this.grid[x]![y + 1]!;
                 }
             }
         }
     }
 
-    private executeWithTurnSafety(playerId: 1 | 2, action: () => boolean): boolean {
+    private executeWithTurnSafety(playerId: number, action: () => boolean): boolean {
         if (playerId !== this.currentPlayerId) return false;
 
         const success = action();
 
         if (success) {
-            this.currentPlayerId = this.currentPlayerId === 1 ? 2 : 1;
+            this.switchTurn();
             this.notify();
         }
         return success;
     }
 
-    public movePlayer(playerId: 1 | 2, targetCell: Cell): boolean {
+    private switchTurn() {
+        this.currentPlayerId = (this.currentPlayerId % this.players.length) + 1;
+    }
+
+    public movePlayer(playerId: number, targetCell: Cell): boolean {
         return this.executeWithTurnSafety(playerId, () => {
             const player = this.players[playerId - 1]!;
 
@@ -112,7 +125,7 @@ export class Board {
         return moves;
     }
 
-    public placeWall(playerId: 1 | 2, wall: Wall): boolean {
+    public placeWall(playerId: number, wall: Wall): boolean {
         return this.executeWithTurnSafety(playerId, () => {
             const player = this.players[playerId - 1]!;
 
@@ -137,9 +150,9 @@ export class Board {
         // Check bounds
         if (
             wall.x < 0 ||
-            wall.x >= Board.SIZE - 1 ||
+            wall.x >= this.size - 1 ||
             wall.y < 0 ||
-            wall.y >= Board.SIZE - 1
+            wall.y >= this.size - 1
         ) {
             return false;
         }
@@ -244,8 +257,14 @@ export class Board {
     }
 
     public isGameOver() {
-        const p1Won = this.players[0]!.currentCell.y === this.players[0]!.goalRow;
-        const p2Won = this.players[1]!.currentCell.y === this.players[1]!.goalRow;
-        return p1Won || p2Won;
+        for (const player of this.players) {
+            const goal = player.goal;
+            const current = player.currentCell;
+            if ((goal.axis === 'x' && current.x === goal.targetValue) ||
+                (goal.axis === 'y' && current.y === goal.targetValue)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

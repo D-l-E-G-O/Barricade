@@ -11,8 +11,8 @@ export class Pathfinder {
             const current = queue.shift()!;
 
             if (
-                (player.id === 1 && current.y === player.goalRow) ||
-                (player.id === 2 && current.y === player.goalRow)
+                (player.goal.axis === 'y' && current.y === player.goal.targetValue) ||
+                (player.goal.axis === 'x' && current.x === player.goal.targetValue)
             ) {
                 return true;
             }

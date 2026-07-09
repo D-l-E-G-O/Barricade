@@ -1,6 +1,6 @@
 import type { Board } from "../core/Board.js";
 
-export function PlayerInfo({ board, playerId }: { board: Board; playerId: 1 | 2 }) {
+export function PlayerInfo({ board, playerId }: { board: Board; playerId: number }) {
     return (
         <div className={`player-info ${board.currentPlayerId === playerId ? 'active' : ''}`}>
             <div className={`avatar p${playerId}-avatar`}></div>
