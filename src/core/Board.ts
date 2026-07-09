@@ -9,6 +9,8 @@ export class Board {
     public players: Player[];
     public currentPlayerId: 1 | 2 = 1;
 
+    private listeners: Array<() => void> = [];
+
     public constructor() {
         this.grid = [];
         this.placedWalls = [];
@@ -63,6 +65,7 @@ export class Board {
 
         if (success) {
             this.currentPlayerId = this.currentPlayerId === 1 ? 2 : 1;
+            this.notify();
         }
         return success;
     }
@@ -228,5 +231,15 @@ export class Board {
         this.unblockPath(wall);
 
         return !p1CanWin || !p2CanWin;
+    }
+
+    public subscribe(listener: () => void) {
+        this.listeners.push(listener);
+    }
+
+    private notify() {
+        for (const listener of this.listeners) {
+            listener();
+        }
     }
 }
