@@ -69,6 +69,7 @@ h1 {
     text-transform: uppercase;
     background: linear-gradient(to right, var(--p1-color), var(--p2-color));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -284,6 +285,7 @@ h1 {
     font-size: 3rem;
     background: linear-gradient(to right, var(--p1-color), var(--p2-color));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 

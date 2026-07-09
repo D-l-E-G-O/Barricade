@@ -5,7 +5,7 @@ interface GapProps {
     board: Board;
     x: number;
     y: number;
-    onClick: () => void;
+    onClick: (e: React.MouseEvent) => void;
     onMouseMove: (e: React.MouseEvent) => void;
     onMouseLeave: () => void;
     hoveredWall: Wall | null;

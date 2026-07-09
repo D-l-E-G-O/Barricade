@@ -1,4 +1,4 @@
-import { Board } from "../core/Board.js";
+import { Board, type PlayerConfig } from "../core/Board.js";
 
 interface Props {
     winnerId: number | null | undefined;
@@ -17,7 +17,8 @@ export function GameOverModal({ winnerId, board, onPlayAgain, onBackToMenu }: Pr
                 <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
 
                     <button onClick={() => {
-                        const newBoard = new Board(board.size, board.players.length);
+                        const config = board.players.map(p => p.isBot && p.difficulty ? p.difficulty : 'human') as PlayerConfig[];
+                        const newBoard = new Board(board.size, board.players.length, config);
                         onPlayAgain(newBoard);
                     }}>
                         Rematch

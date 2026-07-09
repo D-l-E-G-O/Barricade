@@ -1,5 +1,7 @@
-import { type Cell, Player, type Wall } from '../models/types.js';
+import { type Cell, Player, type Wall, type Difficulty } from '../models/types.js';
 import { Pathfinder } from './Pathfinder.js';
+
+export type PlayerConfig = 'human' | 'easy' | 'intermediate' | 'expert';
 
 export class Board {
     public size: number;
@@ -10,7 +12,7 @@ export class Board {
 
     private listeners: Array<() => void> = [];
 
-    public constructor(size: number = 9, numPlayers: number = 2) {
+    public constructor(size: number = 9, numPlayers: number = 2, config: PlayerConfig[] = []) {
         this.size = size;
         this.grid = [];
         this.placedWalls = [];
@@ -22,13 +24,28 @@ export class Board {
         const center = Math.floor(this.size / 2);
         const max = this.size - 1;
 
-        this.players.push(new Player(this.grid[center]![0]!, 10, { axis: 'y', targetValue: max }, 1));
-        this.players.push(new Player(this.grid[center]![max]!, 10, { axis: 'y', targetValue: 0 }, 2));
-        if (numPlayers >= 3) {
-            this.players.push(new Player(this.grid[0]![center]!, 10, { axis: 'x', targetValue: max }, 3));
-        }
-        if (numPlayers === 4) {
-            this.players.push(new Player(this.grid[max]![center]!, 10, { axis: 'x', targetValue: 0 }, 4));
+        const spawnData = [
+            { startX: center, startY: 0, goalAxis: 'y' as const, goalValue: max },
+            { startX: center, startY: max, goalAxis: 'y' as const, goalValue: 0 },
+            { startX: 0, startY: center, goalAxis: 'x' as const, goalValue: max },
+            { startX: max, startY: center, goalAxis: 'x' as const, goalValue: 0 }
+        ];
+
+        const totalWalls = Math.round((this.size * this.size) / 4);
+        const barriers = Math.floor(totalWalls / numPlayers);
+
+        for (let i = 0; i < numPlayers; i++) {
+            const id = i + 1;
+            const data = spawnData[i]!;
+            const cfg = config[i] || 'human';
+
+            const isBot = cfg !== 'human';
+            const diff = isBot ? cfg as Difficulty : undefined;
+
+            const startCell = this.grid[data.startX]![data.startY]!;
+            const goal = { axis: data.goalAxis, targetValue: data.goalValue };
+            
+            this.players.push(new Player(startCell, barriers, goal, id, isBot, diff));
         }
     }
 
@@ -102,7 +119,13 @@ export class Board {
     public getValidMoves(player: Player): Cell[] {
         const moves: Cell[] = [];
 
-        const opponent = this.players.find(p => p !== player)!;
+        // Pre-calculate all cells currently occupied by opponents
+        const occupiedCells = new Set<Cell>();
+        for (const p of this.players) {
+            if (p.id !== player.id) {
+                occupiedCells.add(p.currentCell);
+            }
+        }
 
         const directions: ('up' | 'down' | 'left' | 'right')[] = ['up', 'down', 'left', 'right'];
 
@@ -111,15 +134,16 @@ export class Board {
 
             if (adjacentCell === null) continue;
 
-            if (adjacentCell !== opponent.currentCell) {
+            if (!occupiedCells.has(adjacentCell)) {
                 moves.push(adjacentCell);
-                continue;
-            }
+            } else {
+                // If an opponent is in the adjacent cell, we can jump over them!
+                const jumpCell = adjacentCell[dir];
 
-            const jumpCell = opponent.currentCell[dir];
-
-            if (jumpCell !== null) {
-                moves.push(jumpCell);
+                // Ensure the jump landing cell exists and is NOT occupied by another player
+                if (jumpCell !== null && !occupiedCells.has(jumpCell)) {
+                    moves.push(jumpCell);
+                }
             }
         }
         return moves;
@@ -144,6 +168,30 @@ export class Board {
 
             return true;
         });
+    }
+
+    public simulateWall<T>(wall: Wall, evaluator: () => T): T | null {
+        if (!this.isValidWallPlacement(wall)) return null;
+
+        this.blockPath(wall);
+
+        let isTrappingSomeone = false;
+        for (const p of this.players) {
+            if (!Pathfinder.hasPath(p)) {
+                isTrappingSomeone = true;
+                break;
+            }
+        }
+
+        if (isTrappingSomeone) {
+            this.unblockPath(wall);
+            return null;
+        }
+
+        const result = evaluator();
+
+        this.unblockPath(wall);
+        return result;
     }
 
     public isValidWallPlacement(wall: Wall): boolean {
@@ -238,12 +286,17 @@ export class Board {
     private isBlockingAllPaths(wall: Wall): boolean {
         this.blockPath(wall);
 
-        const p1CanWin = Pathfinder.hasPath(this.players[0]!);
-        const p2CanWin = Pathfinder.hasPath(this.players[1]!);
+        let isTrappingSomeone = false;
+
+        for (const player of this.players) {
+            if (!Pathfinder.hasPath(player)) {
+                isTrappingSomeone = true;
+                break;
+            }
+        }
 
         this.unblockPath(wall);
-
-        return !p1CanWin || !p2CanWin;
+        return isTrappingSomeone;
     }
 
     public subscribe(listener: () => void) {
