@@ -44,7 +44,7 @@ export class Board {
 
             const startCell = this.grid[data.startX]![data.startY]!;
             const goal = { axis: data.goalAxis, targetValue: data.goalValue };
-            
+
             this.players.push(new Player(startCell, barriers, goal, id, isBot, diff));
         }
     }
@@ -137,7 +137,7 @@ export class Board {
             if (!occupiedCells.has(adjacentCell)) {
                 moves.push(adjacentCell);
             } else {
-                // If an opponent is in the adjacent cell, we can jump over them!
+                // If an opponent is in the adjacent cell, we can jump over them
                 const jumpCell = adjacentCell[dir];
 
                 // Ensure the jump landing cell exists and is NOT occupied by another player

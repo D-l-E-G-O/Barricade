@@ -41,7 +41,7 @@ export class AI {
             return;
         }
 
-        // 1. Threat Assessment: Find the closest opponent
+        // 1. Find the closest opponent
         let bestOpponent: Player | null = null;
         let opponentPath: Cell[] | null = null;
         let minOpponentDistance = Infinity;
@@ -55,7 +55,7 @@ export class AI {
             }
         }
 
-        // 2. Decide: If an opponent is beating us (or tied) and we have walls, block them
+        // 2. If an opponent is beating us (or tied) and we have walls, block them
         if (player.barriersLeft > 0 && opponentPath && minOpponentDistance <= myPath.length) {
 
             // 15% chance to ignore the threat and move forward
@@ -171,9 +171,9 @@ export class AI {
 
             for (const wall of candidateWalls) {
                 board.simulateWall(wall, () => {
-                    // Recalculate my path because my own wall might block me!
+                    // Recalculate my path because my own wall might block me
                     const newMyPath = Pathfinder.getRandomShortestPath(player);
-                    if (!newMyPath) return; 
+                    if (!newMyPath) return;
 
                     let minOpp = Infinity;
                     for (const p of board.players) {
