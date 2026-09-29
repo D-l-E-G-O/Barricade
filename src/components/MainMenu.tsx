@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Board, type PlayerConfig } from "../core/Board.js";
 
 interface Props {
-    onStartGame: (board: Board) => void;
+    onStartGame: (board: Board, showRankings: boolean) => void;
 }
 
 export function MainMenu({ onStartGame }: Props) {
     const [menuSize, setMenuSize] = useState(9);
     const [menuPlayers, setMenuPlayers] = useState(2);
     const [playerConfig, setPlayerConfig] = useState<PlayerConfig[]>(['human', 'human', 'human', 'human']);
+    const [showRankings, setShowRankings] = useState(false);
 
     const updateConfig = (index: number, val: PlayerConfig) => {
         const newConfig = [...playerConfig];
@@ -49,8 +50,15 @@ export function MainMenu({ onStartGame }: Props) {
                     ))}
                 </div>
 
+                <label style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <input type="checkbox"
+                        checked={showRankings}
+                        onChange={(e) => setShowRankings(e.target.checked)} />
+                    Show player rankings
+                </label>
+
                 <button
-                    onClick={() => onStartGame(new Board(menuSize, menuPlayers, playerConfig))}
+                    onClick={() => onStartGame(new Board(menuSize, menuPlayers, playerConfig), showRankings)}
                     style={{ padding: '1rem 2rem', fontSize: '1.2rem', fontWeight: 'bold', background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', cursor: 'pointer', marginTop: '1rem' }}
                 >
                     Start Game

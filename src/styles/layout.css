@@ -59,3 +59,12 @@ h1 {
     min-width: 280px;
     justify-self: end;
 }
+
+.left-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    min-width: 280px;
+    justify-self: start;
+}

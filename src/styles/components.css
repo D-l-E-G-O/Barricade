@@ -175,3 +175,51 @@
         transform: translateY(0);
     }
 }
+
+/* Ranking styles */
+.ranking-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+    gap: 2rem;
+}
+
+.ranking-row:last-child {
+    border-bottom: none;
+}
+
+.ranking-player {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ranking-rank {
+    font-weight: 700;
+    width: 20px;
+    text-align: center;
+}
+
+.ranking-name {
+    font-weight: 500;
+}
+
+.ranking-badge {
+    font-weight: 600;
+    font-size: 0.875rem;
+    background-color: var(--bg-surface-elevated);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    white-space: nowrap;
+}
+
+.text-primary {
+    color: var(--text-primary);
+}
+
+.text-secondary {
+    color: var(--text-secondary);
+}

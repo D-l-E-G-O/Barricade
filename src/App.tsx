@@ -4,6 +4,7 @@ import { GameBoard } from './components/GameBoard.js';
 import { PlayerInfo } from './components/PlayerInfo.js';
 import { MainMenu } from './components/MainMenu.js';
 import { GameOverModal } from './components/GameOverModal.js';
+import { LiveRanking } from './components/LiveRanking.js';
 
 export function App() {
     const [gameState, setGameState] = useState<'menu' | 'playing'>('menu');
@@ -11,15 +12,18 @@ export function App() {
     const boardRef = useRef(new Board());
     const board = boardRef.current;
 
+    const showRankingsRef = useRef(false);
+
     const [, setTick] = useState(0);
     useEffect(() => {
         board.subscribe(() => setTick(t => t + 1));
     }, [board]);
 
     if (gameState === 'menu') {
-        return <MainMenu onStartGame={(newBoard) => {
+        return <MainMenu onStartGame={(newBoard, showRankings) => {
             newBoard.subscribe(() => setTick(t => t + 1));
             boardRef.current = newBoard;
+            showRankingsRef.current = showRankings;
             setGameState('playing');
         }} />;
     }
@@ -37,7 +41,11 @@ export function App() {
                 <h1>Barricade</h1>
             </div>
 
-            <div />
+            {showRankingsRef.current ? (
+                <LiveRanking board={board} />
+            ) : (
+                <div />
+            )}
 
             <main>
                 <GameBoard board={board} />
