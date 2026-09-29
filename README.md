@@ -43,16 +43,15 @@ Le projet est organisé autour d'une séparation entre la logique du jeu, les mo
   - Gestion des niveaux de difficulté des bots.
 
 - **Recherche de chemins (`Pathfinder`)** :
-  - Vérification qu'un joueur conserve toujours un chemin vers son objectif.
-  - Recherche d'un plus court chemin.
-  - Utilisation par l'intelligence artificielle pour choisir ses actions.
+  - Implémentation d'un algorithme de **Parcours en largeur (Breadth-First Search - BFS)**.
+  - Explore les cases voisines de proche en proche à l'aide d'une file (queue), garantissant de trouver le chemin le plus court vers l'objectif.
+  - L'ordre d'exploration des directions (Haut, Bas, Gauche, Droite) est mélangé aléatoirement pour éviter des déplacements répétitifs et robotiques de la part de l'IA.
+  - Ce module est crucial à la fois pour guider les bots et pour vérifier qu'un mur placé ne bloque pas totalement un joueur.
 
 - **Intelligence artificielle (`AI`)** :
-  - Trois niveaux de difficulté.
-  - Déplacement automatique des bots.
-  - Évaluation des chemins.
-  - Placement de barrières contre les adversaires.
-  - Simulation d'actions avant leur exécution pour le niveau expert.
+  - **Bot Facile :** Ne pose jamais de mur et se contente d'avancer vers son objectif en suivant le chemin le plus court fourni par le Pathfinder.
+  - **Bot Intermédiaire :** Analyse les chemins de ses adversaires. Si un adversaire est plus proche de la victoire que lui, le bot a 85% de chance de tenter de placer un mur sur les prochains pas de cet adversaire pour le ralentir. S'il ne trouve pas de mur pertinent ou qu'il est en tête, il se contente d'avancer.
+  - **Bot Expert :** Calcule à chaque tour tous les déplacements valides et plusieurs placements de murs potentiels. Il attribue un score à chaque action en calculant un ratio mathématique entre son avancée et le retardement des adversaires, puis exécute l'action qui maximise ses chances de victoire.
 
 - **Interface React** :
   - Menu de configuration.
@@ -73,7 +72,6 @@ Le projet est organisé autour d'une séparation entre la logique du jeu, les mo
 - **Interface utilisateur :** React 19
 - **Outil de développement et de compilation :** Vite
 - **Rendu :** HTML, CSS et composants React
-- **Styles :** CSS moderne, variables CSS, CSS Grid et effets de type *glassmorphism*
 - **Gestion des dépendances :** npm
 - **Environnement :** Node.js
 - **Déploiement :** Application web statique compatible avec GitHub Pages
@@ -130,31 +128,6 @@ Il est donc possible de jouer :
 - contre un ou plusieurs bots ;
 - avec une combinaison de joueurs humains et de bots ;
 - avec plusieurs bots de niveaux différents.
-
-## Fonctionnalités principales
-
-- **Plateau configurable** : choix d'une taille comprise entre 5×5 et 19×19.
-- **Parties de 2 à 4 joueurs** : configuration libre du nombre de participants.
-- **Joueurs humains et bots** : chaque joueur peut être contrôlé manuellement ou automatiquement.
-- **Trois niveaux d'intelligence artificielle**.
-- **Déplacements validés automatiquement**.
-- **Mise en évidence des déplacements possibles**.
-- **Sauts par-dessus les adversaires**.
-- **Placement de barrières horizontales ou verticales**.
-- **Aperçu des barrières au survol**.
-- **Détection des placements invalides**.
-- **Gestion du nombre de barrières disponibles**.
-- **Vérification de l'existence d'un chemin vers l'objectif**.
-- **Indicateur du joueur actif**.
-- **Affichage des informations de chaque joueur**.
-- **Messages d'erreur temporaires**.
-- **Détection automatique de la victoire**.
-- **Fenêtre de fin de partie**.
-- **Possibilité de rejouer immédiatement**.
-- **Conservation de la configuration lors d'une revanche**.
-- **Bouton de retour au menu principal**.
-- **Interface responsive**.
-- **Design moderne avec animations et effets visuels**.
 
 ## Déplacements des joueurs
 
@@ -227,49 +200,6 @@ Par exemple, pour un plateau de **9×9** avec **3 joueurs** :
 
 Le nombre de barrières restantes est affiché dans le panneau latéral pendant toute la partie.
 
-## Intelligence artificielle
-
-Les bots jouent automatiquement leur tour après un court délai afin de rendre le déroulement de la partie plus lisible.
-
-### Bot facile
-
-Le bot facile utilise une stratégie simple :
-
-- recherche d'un plus court chemin vers son objectif ;
-- tentative de déplacement vers la prochaine cellule de ce chemin ;
-- choix d'un déplacement valide aléatoire lorsque le chemin optimal ne peut pas être suivi.
-
-Ce niveau est adapté aux joueurs qui souhaitent découvrir le jeu ou jouer une partie détendue.
-
-### Bot intermédiaire
-
-Le bot intermédiaire prend en compte la progression des adversaires.
-
-Il peut :
-
-- calculer son propre chemin vers l'objectif ;
-- rechercher l'adversaire le plus proche de la victoire ;
-- comparer les distances restantes ;
-- placer une barrière sur l'un des prochains passages de l'adversaire ;
-- revenir à une stratégie de déplacement lorsque le placement d'une barrière n'est pas pertinent.
-
-Le bot dispose également d'une part d'incertitude afin de ne pas toujours adopter la même stratégie.
-
-### Bot expert
-
-Le bot expert évalue plusieurs actions possibles avant de jouer.
-
-Il analyse notamment :
-
-- les déplacements valides ;
-- les barrières qui intersectent les chemins adverses ;
-- la longueur de son propre chemin ;
-- la distance restante pour les adversaires ;
-- l'impact d'une barrière sur les différents chemins ;
-- la conservation d'un chemin vers l'objectif pour chaque joueur.
-
-Le bot simule les actions candidates puis leur attribue un score stratégique. Il privilégie généralement les actions qui permettent de progresser tout en ralentissant les adversaires.
-
 ## Installation et exécution
 
 ### Prérequis
@@ -333,42 +263,6 @@ npm run preview
 | `npm run build`   | Vérifie TypeScript et construit l'application    |
 | `npm run preview` | Sert localement la version de production         |
 
-> [!NOTE]
-> Le script `npm test` est actuellement un placeholder et retourne une erreur indiquant qu'aucun test n'est configuré.
-
-## Structure du projet
-
-```text
-Barricade/
-├── src/
-│   ├── components/
-│   │   ├── Cell.tsx
-│   │   ├── GameBoard.tsx
-│   │   ├── GameOverModal.tsx
-│   │   ├── Gap.tsx
-│   │   ├── MainMenu.tsx
-│   │   └── PlayerInfo.tsx
-│   ├── core/
-│   │   ├── AI.ts
-│   │   ├── Board.ts
-│   │   └── Pathfinder.ts
-│   ├── models/
-│   │   └── types.ts
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── style.css
-├── index.html
-├── package.json
-├── package-lock.json
-├── tsconfig.json
-└── vite.config.ts
-```
-
 ## Déploiement
 
-Barricade est une application web statique compilée avec Vite.
-
-L'application est accessible à l'adresse suivante :
-
-- **Application :** https://d-l-e-g-o.github.io/Barricade/
-- **Dépôt GitHub :** https://github.com/D-l-E-G-O/Barricade
+L'application est accessible à l'adresse suivante : https://d-l-e-g-o.github.io/Barricade/
