@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --bg-base: #09090b;
+    --bg-surface: #18181b;
+    --bg-surface-elevated: #27272a;
+
+    --border-subtle: #27272a;
+    --border-focus: #3f3f46;
+
+    --p1-color: #3b91f3;
+    --p2-color: #f43f5e;
+    --p3-color: #10b981;
+    --p4-color: #6100bd;
+
+    --wall-color: #eab308;
+    --error-color: #ef4444;
+
+    --text-primary: #fafafa;
+    --text-secondary: #a1a1aa;
+
+    --cell-size: clamp(15px, 4.5vh, 50px);
+    --gap-size: clamp(5px, 1.5vh, 15px);
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}

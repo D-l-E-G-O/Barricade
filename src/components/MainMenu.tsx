@@ -18,7 +18,7 @@ export function MainMenu({ onStartGame }: Props) {
 
     return (
         <div className="app-container">
-            <div className="glass-panel" style={{ padding: '3rem 5rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div className="panel" style={{ padding: '3rem 5rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 <h1>Barricade</h1>
 
                 <div>
@@ -33,8 +33,8 @@ export function MainMenu({ onStartGame }: Props) {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
                     {Array.from({ length: menuPlayers }).map((_, i) => (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span>Player {i + 1}:</span>
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '2rem' }}>
+                            <span style={{ fontWeight: '500' }}>Player {i + 1}:</span>
                             <select
                                 value={playerConfig[i]}
                                 onChange={(e) => updateConfig(i, e.target.value as PlayerConfig)}

@@ -12,7 +12,7 @@ export function GameOverModal({ winnerId, board, onPlayAgain, onBackToMenu }: Pr
 
     return (
         <div className="modal-overlay">
-            <div className="modal-content glass-panel">
+            <div className="modal-content panel">
                 <h2>Player {winnerId} Wins!</h2>
                 <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
 

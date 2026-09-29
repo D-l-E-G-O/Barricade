@@ -1,0 +1,177 @@
+/* Card/Panel aesthetics */
+.panel {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    box-shadow: var(--shadow-xl);
+}
+
+.panel {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    box-shadow: var(--shadow-xl);
+}
+
+/* Game Info & Players */
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 2rem;
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0.4;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.player-info.active {
+    opacity: 1;
+    transform: translateX(4px);
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+}
+
+.p1-avatar {
+    background: var(--p1-color);
+}
+
+.p2-avatar {
+    background: var(--p2-color);
+}
+
+.p3-avatar {
+    background: var(--p3-color);
+}
+
+.p4-avatar {
+    background: var(--p4-color);
+}
+
+.turn-indicator {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    text-align: center;
+}
+
+/* Buttons */
+.back-btn {
+    padding: 0.75rem 1.25rem;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.back-btn:hover {
+    background: var(--bg-surface-elevated);
+    color: var(--text-primary);
+}
+
+.modal-content button {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-content button:hover {
+    background: var(--border-focus);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Toasts */
+.toast {
+    left: 50%;
+    position: fixed;
+    bottom: 2.5rem;
+    background: var(--bg-surface-elevated);
+    color: var(--text-primary);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--error-color);
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    z-index: 50;
+}
+
+.toast.hidden {
+    transform: translateX(-50%) translateY(20px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Game Over Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(9, 9, 11, 0.8);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-content {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-xl);
+    border-radius: 16px;
+    padding: 3rem 4rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

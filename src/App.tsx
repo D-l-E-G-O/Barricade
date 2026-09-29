@@ -43,7 +43,7 @@ export function App() {
                 <GameBoard board={board} />
             </main>
 
-            <aside className="right-sidebar glass-panel">
+            <aside className="right-sidebar panel">
                 <button className="back-btn" onClick={() => setGameState('menu')}>
                     ← Back to Menu
                 </button>

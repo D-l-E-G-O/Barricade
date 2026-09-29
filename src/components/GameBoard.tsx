@@ -53,7 +53,7 @@ export function GameBoard({ board }: { board: Board }) {
     const handleGapMouseMove = (e: React.MouseEvent, x: number, y: number, isVertical: boolean) => {
         if (!isHumanTurn) return;
         const previewWall = getSnappedWall(e, x, y, isVertical);
-        
+
         if (board.isValidWallPlacement(previewWall)) {
             setHoveredWall(previewWall);
         } else {
@@ -78,7 +78,7 @@ export function GameBoard({ board }: { board: Board }) {
 
     return (
         <main className="game-area">
-            <div className="board glass-panel"
+            <div className="board panel"
                 style={{
                     '--cell-size': `calc(min(80vh, 60vw) * 3 / ${totalUnits})`,
                     '--gap-size': `calc(min(80vh, 60vw) * 1 / ${totalUnits})`,
