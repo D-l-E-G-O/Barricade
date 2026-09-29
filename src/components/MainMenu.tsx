@@ -19,23 +19,23 @@ export function MainMenu({ onStartGame }: Props) {
 
     return (
         <div className="app-container">
-            <div className="panel" style={{ padding: '3rem 5rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div className="panel" style={{ padding: '2rem 4rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <h1>Barricade</h1>
 
-                <div>
-                    <h3 style={{ marginBottom: '1rem' }}>Board Size: {menuSize}x{menuSize}</h3>
+                <div style={{ margin: '0 auto', width: '100%', maxWidth: '300px' }}>
+                    <h3 style={{ marginBottom: '0.5rem' }}>Board Size: {menuSize}x{menuSize}</h3>
                     <input type="range" min="5" max="19" step="2" value={menuSize} onChange={e => setMenuSize(Number(e.target.value))} style={{ width: '100%' }} />
                 </div>
 
-                <div>
-                    <h3 style={{ marginBottom: '1rem' }}>Players: {menuPlayers}</h3>
+                <div style={{ margin: '0 auto', width: '100%', maxWidth: '300px' }}>
+                    <h3 style={{ marginBottom: '0.5rem' }}>Players: {menuPlayers}</h3>
                     <input type="range" min="2" max="4" step="1" value={menuPlayers} onChange={e => setMenuPlayers(Number(e.target.value))} style={{ width: '100%' }} />
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: menuPlayers > 2 ? '1fr 1fr' : '1fr', gap: '1rem 2rem', marginTop: '0.5rem' }}>
                     {Array.from({ length: menuPlayers }).map((_, i) => (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '2rem' }}>
-                            <span style={{ fontWeight: '500' }}>Player {i + 1}:</span>
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+                            <span style={{ fontWeight: '500', whiteSpace: 'nowrap' }}>Player {i + 1}:</span>
                             <select
                                 value={playerConfig[i]}
                                 onChange={(e) => updateConfig(i, e.target.value as PlayerConfig)}
