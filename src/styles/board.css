@@ -35,6 +35,7 @@
 .gap-h {
     height: var(--gap-size);
     cursor: pointer;
+    border-radius: 4px;
     transition: background-color 0.2s ease;
 }
 .gap-h:hover {
@@ -44,6 +45,7 @@
 .gap-v {
     width: var(--gap-size);
     cursor: pointer;
+    border-radius: 4px;
     transition: background-color 0.2s ease;
 }
 .gap-v:hover {
@@ -96,13 +98,11 @@
 
 /* Wall Previews */
 .wall-preview {
-    background: var(--wall-color) !important;
-    opacity: 0.5;
+    background: color-mix(in srgb, var(--wall-color) 50%, transparent) !important;
     border-radius: 4px;
-    transition-delay: 0ms;
 }
 
 .wall-error {
-    background: var(--error-color) !important;
-    opacity: 0.5;
+    background: color-mix(in srgb, var(--error-color) 50%, transparent) !important;
+    border-radius: 4px;
 }
